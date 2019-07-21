@@ -1,6 +1,6 @@
 ---
 title: Emoji Test
-tags:
+category: tutorial
 ---
 
 This is an emoji test. :smile: lol.
