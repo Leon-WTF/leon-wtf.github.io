@@ -1,10 +1,11 @@
 ---
+title: 记Python logging非进程安全踩得坑
 category: Python
 tags: [python, concurrency]
 ---
 ### 背景 ###
 有两个python进程A和B复用同一个logger创建模块，往同一个文件里写日志，用的是TimedRotatingFileHandler，并且每天午夜进行文件rollover，保留15天的文件
-<!-- more -->
+
 ### 现象 ###
 偶尔会发现某一天的日志里记录的时间是后一天的，并且只有几行
 
@@ -180,6 +181,7 @@ tags: [python, concurrency]
 3. 将当前文件baseFilename重命名为上一步计算出的文件名dfn
 4. 重新打开一个baseFilename的stream来写日志
 5. 重新计算下一次需要rollover的时间
+
 在初始化中第一次计算下一次rollover时间时：
 ```python
    def __init__(self, filename, when='h', interval=1, backupCount=0, encoding=None, delay=False, utc=False):
