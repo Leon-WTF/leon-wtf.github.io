@@ -1,7 +1,7 @@
 ---
 title: Highlight Test
 categories:
- - Test
+ - tutorial
 tags:
 ---
 
