@@ -3,7 +3,7 @@ title: "Java8 Optional与NullPointerException"
 category: Java
 tag: java
 ---
-[JAVA异常类](https://segmentfault.com/a/1190000019367165)列举了Java中部分的异常类，其中最常见的当属NullPointerException了，程序员必须小心提防，所幸Java 8中引入了Optional类这个语法糖来更好的处理这个异常。
+[JAVA异常类](https://leon-wtf.github.io/leon.github.io/java/2019/06/03/JAVA%E5%BC%82%E5%B8%B8%E7%B1%BB/)列举了Java中部分的异常类，其中最常见的当属NullPointerException了，程序员必须小心提防，所幸Java 8中引入了Optional类这个语法糖来更好的处理这个异常。
 
 比如有如下三个类需要递归引用：
 ```java
