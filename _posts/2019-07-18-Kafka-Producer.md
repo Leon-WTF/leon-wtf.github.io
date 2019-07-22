@@ -420,8 +420,12 @@ openssl x509 -req -CA ca-cert -CAkey ca-key -in cert-file -out cert-signed -days
 keytool -keystore kafka.server.keystore.jks -alias CARoot -import -file ca-cert
 keytool -keystore kafka.server.keystore.jks -alias localhost -import -file cert-signed
 ```
-To use SSL in kafka-python, export pem file from the keystore as [Connect to Apache Kafka from Python using SSL](http://maximilianchrist.com/python/databases/2016/08/13/connect-to-apache-kafka-from-python-using-ssl.html) said.
-[Kafka producer overview](https://dzone.com/articles/kafka-producer-overview)
-python clients:
-[confluent-kafka-python](https://github.com/confluentinc/confluent-kafka-python) : created by Confluent which is based on C client [librdkafka](https://github.com/edenhill/librdkafka)
-[kafka-python](https://github.com/dpkp/kafka-python): created by open source community which is fully written by python
+>To use SSL in kafka-python, export pem file from the keystore as [Connect to Apache Kafka from Python using SSL](http://maximilianchrist.com/python/databases/2016/08/13/connect-to-apache-kafka-from-python-using-ssl.html) said.
+
+>[Kafka producer overview](https://dzone.com/articles/kafka-producer-overview)
+>
+>Python clients:
+>
+>[confluent-kafka-python](https://github.com/confluentinc/confluent-kafka-python) : created by Confluent which is based on C client: [librdkafka](https://github.com/edenhill/librdkafka)
+>
+>[kafka-python](https://github.com/dpkp/kafka-python): created by open source community which is fully written by python
