@@ -3,13 +3,9 @@ title: "Kafka Producer"
 category: Kafka
 tag: kafka
 ---
-[Kafka producer overview](https://dzone.com/articles/kafka-producer-overview)
-python clients:
-[confluent-kafka-python](https://github.com/confluentinc/confluent-kafka-python) : created by Confluent which is based on C client [librdkafka](https://github.com/edenhill/librdkafka)
-[kafka-python](https://github.com/dpkp/kafka-python): created by open source community which is fully written by python
-
-Next, I will show you the kafka producer workflow using kafka-python:
+I will show you the kafka producer workflow using kafka-python:
 ### Initialize ###
+
 ```python
 # Create the producer object by passing the config dictionary
 producer = KafkaProducer(**kafka_config)
@@ -246,7 +242,7 @@ def _maybe_compress(self):
     return False
 ```
 ### Socket ###
-The Kafka producer uses the I/O multiplexing model [Linux I/O model 和 JAVA NIO/AIO](https://segmentfault.com/a/1190000019558101)
+The Kafka producer uses the I/O multiplexing model [Linux I/O model 和 JAVA NIO/AIO](https://leon-wtf.github.io/leon.github.io/java/2019/06/19/Linux-IO-model%E5%92%8CJAVA-NIO-AIO/)
 #### Create connection ####
 ```python
 # In sender thread, run->run_once->self._client.poll(poll_timeout_ms)->self._maybe_refresh_metadata()->self.maybe_connect(node_id, wakeup=wakeup)->self._connecting.add(node_id)->Queues a node for asynchronous connection during the next poll()
@@ -425,3 +421,7 @@ keytool -keystore kafka.server.keystore.jks -alias CARoot -import -file ca-cert
 keytool -keystore kafka.server.keystore.jks -alias localhost -import -file cert-signed
 ```
 To use SSL in kafka-python, export pem file from the keystore as [Connect to Apache Kafka from Python using SSL](http://maximilianchrist.com/python/databases/2016/08/13/connect-to-apache-kafka-from-python-using-ssl.html) said.
+[Kafka producer overview](https://dzone.com/articles/kafka-producer-overview)
+python clients:
+[confluent-kafka-python](https://github.com/confluentinc/confluent-kafka-python) : created by Confluent which is based on C client [librdkafka](https://github.com/edenhill/librdkafka)
+[kafka-python](https://github.com/dpkp/kafka-python): created by open source community which is fully written by python
