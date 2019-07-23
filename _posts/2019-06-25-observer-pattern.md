@@ -1,4 +1,5 @@
 ---
+title: 观察者模式
 category: Java
 tags: [design-pattern, java]
 ---

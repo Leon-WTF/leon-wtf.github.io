@@ -1,4 +1,5 @@
 ---
+title: 多线程安全的单例模式
 category: Java
 tags: [java, concurrency, design-pattern]
 ---
