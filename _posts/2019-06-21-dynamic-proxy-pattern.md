@@ -1,4 +1,5 @@
 ---
+title: 动态代理模式
 category: Java
 tags: [design-pattern, java]
 ---
