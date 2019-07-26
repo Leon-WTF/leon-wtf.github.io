@@ -1,6 +1,6 @@
 ---
 title: 动态代理模式
-category: Java
+categories: [Java, DesignPattern]
 tags: [design-pattern, java]
 ---
 [装饰模式 vs (静态)代理模式](https://leon-wtf.github.io/java/2019/06/20/decorative-static-proxy-pattern/)中提到,在静态代理模式中，针对每一个需要被代理的类都要在编译前就提前写好一个代理类，这样做增加了类管理的复杂性，如果我们可以在运行期间动态的来生成这个代理类，就会方便很多，这就是动态代理模式的核心思想，也是Spring中AOP(Aspect Oriented Programming)的实现原理。动态代理有两种实现方法：jdk动态代理和cglib动态代理，下面分别来具体看一下：

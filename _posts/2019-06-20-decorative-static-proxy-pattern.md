@@ -1,6 +1,6 @@
 ---
 title: "装饰模式 vs (静态)代理模式"
-category: Java
+categories: [Java, DesignPattern]
 tags: [design-pattern, java]
 ---
 这两个设计模式都属于结构型模式，且非常相似，其UML图如下：

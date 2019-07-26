@@ -1,6 +1,6 @@
 ---
 title: 观察者模式
-category: Java
+categories: [Java, DesignPattern]
 tags: [design-pattern, java]
 ---
 观察者模式又称订阅-发布模式，是一种一对多的依赖关系，多个观察者对象可同时监听某一主题对象，当该主题对象状态发生变化时，相应的所有观察者对象都可收到通知。

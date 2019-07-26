@@ -358,13 +358,6 @@ highlight_theme: normal
 # ---------------------------------------------------------------
 # Third Party Services Settings
 # ---------------------------------------------------------------
-
-# MathJax Support
-mathjax:
-  enable: false
-  per_page: false
-  cdn: //cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
-
 # Han Support docs: https://hanzi.pro/
 han: false
 
@@ -434,12 +427,12 @@ changyan:
 
 # Support for gitalk comments system.
 gitalk:
-  enable: false
-  clientID: # 54730ddf7b9420460c03
-  clientSecret: # c05684701b25ff1c19ea0c01ce4d80c125e0707d
-  repo: # colingpt.github.io
-  owner: # colingpt
-  admin: # colingpt
+  enable: true
+  clientID: ded2659da858717b8c5a
+  clientSecret: 6c3942b22731cb6f007f3a847a561ad77aaf370c
+  repo: leon-wtf.github.io
+  owner: leon-wtf
+  admin: leon-wtf
 
 # Baidu Share
 # Available value:
@@ -461,7 +454,7 @@ gitalk:
 #google_site_verification:
 
 # Google Analytics
-#google_analytics:
+google_analytics: UA-144557595-1
 
 # Yandex Webmaster tools verification setting
 # See: https://webmaster.yandex.ru/
@@ -585,7 +578,7 @@ algolia_search:
 
 # Local search
 local_search:
-  enable: false
+  enable: true
   # if auto, trigger search by changing input
   # if manual, trigger search by pressing enter key or search button
   trigger: auto
