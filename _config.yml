@@ -75,7 +75,7 @@ plugins:
 # ---------------------------------------------------------------
 
 # Put your favicon.ico into `assets/` directory.
-favicon: /assets/favicon.ico
+#favicon: /assets/favicon.ico
 
 # Set default keywords (Use a comma to separate)
 keywords: "Jekyll, NexT"
@@ -83,7 +83,7 @@ keywords: "Jekyll, NexT"
 # Set rss to false to disable feed link.
 # Leave rss as empty to use site's feed link.
 # Set rss to specific value if you have burned your feed already.
-rss:
+rss: false
 
 # Specify the date when the site was setup
 #since: 2015
@@ -104,7 +104,7 @@ copyright: true
 canonical: true
 
 # Change headers hierarchy on site-subtitle (will be main site description) and on all post/pages titles for better SEO-optimization.
-seo: false
+seo: true
 
 # If true, will add site-subtitle to index page, added in jekyll config.
 # subtitle: Subtitle
@@ -228,8 +228,13 @@ social_icons:
   GitHub: github
   Twitter: twitter
   Weibo: weibo
+  Zhihu: coffee
+  Bilibili: play
+  Email: envelope
 
-
+social:
+  GitHub: https://github.com/Leon-WTF
+  Email: mailto:tengfei.wang.2018@gmail.com
 # Sidebar Avatar
 # in directory: /assets/images/avatar.gif
 #avatar:
@@ -280,11 +285,11 @@ sidebar:
 
 
 # Blog rolls
-#links_title: Links
+links_title: Friends
 #links_layout: block
-#links_layout: inline
-#links:
-  #Title: http://example.com/
+links_layout: inline
+links:
+  Hope: https://leohope.com/
 
 
 # ---------------------------------------------------------------
