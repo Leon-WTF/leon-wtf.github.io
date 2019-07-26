@@ -19,7 +19,7 @@ tags: [ood, design-pattern]
 个人觉得第三种模式使用场景较少且比较鸡肋，主要介绍前两种。
 先来看下简单工厂模式：
 
-![simple_factory_uml](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/simple_factory_uml.png)
+![simple_factory_uml](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/simple_factory_uml.png)
 
 ```java
 public abstract class Operation{
@@ -86,7 +86,7 @@ public class OperationFactory{
 其次，工厂模式返回抽象类，使调用工厂的高层模块依赖Operation这个抽象类而不是其某个具体的派生类，这满足了Dependency Inversion Principle。
 但是，OperationFactory类中包含了所有Operation派生类的创建，后面如果不断的需要增加新的Operation派生类，就需要不断的修改OperationFactory，这违反了Open-Close Principle，就需要引入工厂方法模式：
 
-![abstract_factory_uml](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/abstract_factory_uml.png)
+![abstract_factory_uml](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/abstract_factory_uml.png)
 
 ```java
 public interface IFactory {

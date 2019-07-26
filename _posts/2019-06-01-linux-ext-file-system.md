@@ -4,7 +4,7 @@ category: Linux
 tag: linux
 ---
 ### Linux文件系统 ###
-![computer_hard_drive](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/computer_hard_drive.png)
+![computer_hard_drive](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/computer_hard_drive.png)
 
 常见的硬盘如上图所示，每个盘片分多个磁道，每个磁道分多个扇区，每个扇区512字节，是硬盘的最小存储单元，但是在操作系统层面会将多个扇区组成块（block），是操作系统存储数据的最小单元，通常是8个扇区组成4K字节的块。
 对于Linux文件系统，需要考虑以下几点：
@@ -94,7 +94,7 @@ struct ext4_inode {
 ```
 在ext2和ext3中i_block前12项存储了直接到数据块的引用，第13项存储的是到间接块的引用，在间接块里存储着数据块的位置，以此类推，第14项里存储着二次间接快的位置，第15项里存储着三次间接块的位置,如下图所示：
 
-![ext2_3_i_block](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/ext2_3_i_block.png)
+![ext2_3_i_block](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/ext2_3_i_block.png)
 
 不难看出，对于大文件，需要多次读取硬盘才能找到相应的块，在ext4中就提出了Extents Tree来解决这一问题，其核心思想就是把连续的块用开始位置加块的个数来表示，不再是一个一个去记录每一个块的位置，这样就能节约存储空间。首先，它将i_block中原来4*15=60字节的空间换成了一个extent header（ext4_extent_header）加4个extent entry（ext4_extent），因为ext4_extent_header和ext4_extent都是占用了12字节。ee_len中的第一个bit用来判断是否初始化，所以它还能存储最大32K个数，所以一个extent entry里最大可以存32K*4K=128M的数据，如果一个文件大于4*128M=512M或者这个文件被分散到多于4个不连续的块中存储，我们就需要扩展inode中的i_block结构。它的extent entry就要从ext4_extent被换成ext4_extent_idx结构体，它所指向的是一个块，有4K字节，除去header占用的12字节，还能存340个ext4_extent，最大可以存340*128M=42.5G的数据。可以看出这种索引结构在文件用连续的块存储时非常高效。
 ```C
@@ -121,7 +121,7 @@ struct ext4_extent_idx {
 ```
 举一个/var/log/messages文件的例子如下图所示：
 
-![ext4_extent_entry](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/ext4_extent_entry.png)
+![ext4_extent_entry](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/ext4_extent_entry.png)
 
 ### inode位图和块位图 ###
 硬盘上会有专门存放块数据的区域也会有存放inode的区域，但是当我们要新建一个文件时，就需要知道哪个inode区域和哪个块是空的，这就需要分别用一个块来存储inode位图和一个块来存储块位图，每一个bit为1表示占用，为0表示未占用。但是一个块最多有4K*8=32K个位，也就最多能表示32K个块的状态，所以需要让这些块组成一个块组，来搭出更大的系统。
@@ -129,8 +129,8 @@ struct ext4_extent_idx {
 ### 硬链接和软链接 ###
 硬链接与原文件共用一个inode，且inode不能跨文件系统，所以硬链接也不能跨文件系统。
 
-![hard_link](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/hard_link.png)
+![hard_link](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/hard_link.png)
 
 软链接有自己inode，只是打开文件时是指向另外一个文件，所以可以跨文件系统且当原文件被删除后仍存在。
 
-![soft_link](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/soft_link.png)
+![soft_link](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/soft_link.png)

@@ -5,13 +5,13 @@ tag: network
 ---
 ### 三次握手 ###
 
-![tcp_connect_workflow](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/tcp_connect_workflow.png)
+![tcp_connect_workflow](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/tcp_connect_workflow.png)
 ### 四次挥手 ###
 
-![tcp_disconnect_workflow](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/tcp_disconnect_workflow.png)
+![tcp_disconnect_workflow](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/tcp_disconnect_workflow.png)
 ### SOCKET ###
 
-![socket_file_structure](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/socket_file_structure.png)
+![socket_file_structure](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/socket_file_structure.png)
 
 在内核中，会维护两个队列：
 - 半连接队列（syn队列），存放处于SYN-RCVD状态的socket

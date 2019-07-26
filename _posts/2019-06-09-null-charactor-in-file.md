@@ -9,12 +9,12 @@ EXT4是一种journaling文件系统，使用了类似于[MySQL](https://segmentf
 - journal
 将数据及元数据都先写入日志文件并落盘，commit日志文件，然后再将数据和元数据写入硬盘正确的位置(In-place write)，异步删除已经写入硬盘正确位置的日志文件数据。如果发生系统crash，可以replay日志文件中已经commit的数据进行恢复。这种模式最安全但性能较差（除了数据需要同时被写入和读取），因为数据被写入了两次。流程如下：
 
-![ext4_journal_mode](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/ext4_journal_mode.png)
+![ext4_journal_mode](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/ext4_journal_mode.png)
 
 - ordered（默认）
 只有元数据写入日志文件，但保证先将数据写入硬盘，再commit日志文件，流程图如下（第1,2步可以同时进行，只要保证在第3步前完成就行）：
 
-![ext4_ordered_mode](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/ext4_ordered_mode.png)
+![ext4_ordered_mode](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/ext4_ordered_mode.png)
 
 如果系统crash，可以通过replay日志文件恢复元数据，保证文件系统一致性，且如果存储的数据是复用已有的文件block来存数据，可以保证数据已经落盘，但由于存在Delayed allocation机制，如果文件需要分配新的block来写入，则系统会推迟将近1分钟才真正刷入硬盘，会导致数据丢失，这也是为什么会看到文件出现^@来填补真实的数据。
 > "Delayed allocation" means that the filesystem tries to delay the allocation of physical disk blocks for written data for as long as possible. This policy brings some important performance benefits. Many files are short-lived; delayed allocation can keep the system from writing fleeting temporary files to disk at all. And, for longer-lived files, delayed allocation allows the kernel to accumulate more data and to allocate the blocks for data contiguously, speeding up both the write and any subsequent reads of that data. It's an important optimization which is found in most contemporary filesystems.
@@ -23,7 +23,7 @@ EXT4是一种journaling文件系统，使用了类似于[MySQL](https://segmentf
 - writeback
 只有元数据写入日志文件，但不保证数据写入硬盘什么时候发生。有可能系统重启后元数据被恢复，但数据因为并没有写入硬盘而丢失。流程图如下：
 
-![ext4_writeback_mode](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/ext4_writeback_mode.png)
+![ext4_writeback_mode](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/ext4_writeback_mode.png)
 
 最后将文件系统在mount时设为journal模式，用性能来换取强一致性。修改***/etc/fstab***：
 ```

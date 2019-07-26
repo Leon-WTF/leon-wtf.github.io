@@ -16,7 +16,7 @@ tags: [jvm, java]
 双亲委派机制：如果一个类未加载，那么必须先由其父加载器（Bootstrap Classloader可以认为是ExtClassLoader父加载器）尝试加载，如果父加载器在其路径内找不到该类才由子加载器加载。可以防止核心类被外来类覆盖。具体的源码分析可以参见[深入理解Java类加载器(ClassLoader)](https://blog.csdn.net/javazejian/article/details/73413292)。
 下面是结合源码，画出的利用AppClassLoader查找类的流程图：
 
-![jvm_class_loader_workflow](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/jvm_class_loader_workflow.png)
+![jvm_class_loader_workflow](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/jvm_class_loader_workflow.png)
 
 ### Class类 ###
 我们通常写的用class（首字母c小写）定义的类，表征了java虚拟机里对象的类型（java是强类型语言），但同时这些类又都是java.lang.Class(首字母C大写)的对象，通过AppClassLoader加载进虚拟机内存方法区。每个类都对应一个独一无二的Class对象，包括Java基本类型、void关键字及数组（所有同一维度和类型的数组拥有同样的Class，数组的长度不做考虑。对应Class的名字表示为维度和类型。比如一个整型数据的Class名为“[I”，字节型三维数组Class名为“[[[B”，两维对象数组Class名为“[[Ljava.lang.Object”）。得到Class对象的方法有三种：

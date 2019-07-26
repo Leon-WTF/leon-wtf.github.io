@@ -6,14 +6,14 @@ tags: [design-pattern, java]
 这两个设计模式都属于结构型模式，且非常相似，其UML图如下：
 装饰模式：
 
-![decorative_pattern_uml](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/decorative_pattern_uml.png)
+![decorative_pattern_uml](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/decorative_pattern_uml.png)
 如下IO方法就是使用了装饰模式：
 ```
 BufferedReader reader = new BufferedReader(new InputStreamReader(Resources.getResourceAsStream(resource))
 ```
 （静态）代理模式：提到代理模式一般是指静态代理模式，动态代理模式会在[动态代理实现原理](https://segmentfault.com/a/1190000019355525)中专门讲解
 
-![static_proxy_pattern_uml](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/static_proxy_pattern_uml.png)
+![static_proxy_pattern_uml](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/static_proxy_pattern_uml.png)
 
 共同点：
 - 装饰者与被装饰者，代理类与被代理类，都是继承自同一个接口，可以令他们在被调用时相互替换

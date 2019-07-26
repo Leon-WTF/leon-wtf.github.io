@@ -153,7 +153,7 @@ static class Entry extends WeakReference<ThreadLocal<?>> {
 ```
 内存模型图如下：
 
-![threadlocal_memory_model](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/threadlocal_memory_model.png)
+![threadlocal_memory_model](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/threadlocal_memory_model.png)
 
 当ThreadLocal Ref出栈后，由于ThreadLocalMap中Entry对ThreadLocal只是弱引用，所以ThreadLocal对象会被回收，Entry的key会变成null，然后在每次get/set/remove ThreadLocalMap中的值的时候，会自动清理key为null的value，这样value也能被回收了。
 ***注意：***

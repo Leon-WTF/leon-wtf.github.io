@@ -80,7 +80,7 @@ public void execute(Runnable command) {
 ```
 其流程如图：
 
-![threadpool_workflow](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/threadpool_workflow.png)
+![threadpool_workflow](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/threadpool_workflow.png)
 
 创建线程是通过addWorker创建内部Worker类，其中调用getThreadFactory().newThread(this)来创建执行自己的线程，之后在addWorker中start该线程，执行Worker run方法中的runWorker会不断的从任务队列中获取任务或阻塞，并且每次执行任务前会执行beforeExecute，之后会afterExecute，可以通过重写beforeExecute方法来给执行线程重命名。
 
@@ -91,7 +91,7 @@ public void execute(Runnable command) {
 - TIDYING:  All tasks have terminated, workerCount is zero, the thread transitioning to state TIDYING will run the terminated() hook method
 - TERMINATED: terminated() has completed
 
-![thread_lifecycle](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/thread_lifecycle.png)
+![thread_lifecycle](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/thread_lifecycle.png)
 
 shutdownNow终止线程的方法是通过调用Thread.interrupt()方法来实现的:
 ```

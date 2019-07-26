@@ -5,17 +5,17 @@ tags: [java, concurrency]
 ---
 操作系统在面对线程间同步的时候，会支持例如semaphore信号量和mutex互斥量等同步原语，而monitor是在编程语言中被实现的，下面介绍一下java中monitor（监视器/管程：管理共享变量以及对其的操作过程，让他们支持并发）的实现原理：
 
-![monitor_model](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/monitor_model.png)
+![monitor_model](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/monitor_model.png)
 
 以一个阻塞队列的实现来举例：
-![blocked_queue](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/blocked_queue.png)
+![blocked_queue](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/blocked_queue.png)
 
 同时，java内置的synchronized关键字可以认为是MESA模型的简化版，其只能有一个条件变量，但编译器会自动添加加锁与解锁的代码。synchronized关键字可以修饰实例方法、类方法以及代码块，如果修饰的是代码块，需要制定关联的Object；如果修饰的是实例方法，那么其关联的对象实际上是this；如果修饰的是类方法，那么其关联的对象是this.class。这些关联的对象就是MESA模型里的条件变量。
 ###synchronized实现原理###
 JVM基于进入和退出monitor对象来实现同步，同步代码块采用添加moniterenter、moniterexit，同步方法使用ACC_SYNCHRONIZED标记符隐式实现。每个对象都有一个monitor与之关联，运行到moniterenter时尝试获取对应monitor的所有权，获取成功就将monitor的进入数加1（所以是可重入锁，也被称为重量级锁），否则就阻塞，拥有monitor的线程运行到moniterexit时进入数减1，为0时释放monitor。
 java中每个对象都有一个对象头，synchronized所用的锁就是存在对象头里的。如果是非数组的对象是8个字节（32位JVM）或者16字节（64位JVM），数组对象还会有一个数组长度（4个字节）。以32位JVM非数组对象为例：
 
-![java_object_header](https://raw.githubusercontent.com/Leon-WTF/leon.github.io/master/img/java_object_header.png)
+![java_object_header](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/java_object_header.png)
 
 锁信息就存在前4个字节的MarkWord中，JVM对synchronized的加锁过程优化为：
 1. 检测Mark Word里面是不是当前线程的ID，如果是，表示当前线程处于偏向锁 

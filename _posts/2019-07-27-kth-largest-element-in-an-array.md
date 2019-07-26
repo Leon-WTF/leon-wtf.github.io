@@ -21,7 +21,7 @@ tag: algorithm
 > https://leetcode-cn.com/problems/kth-largest-element-in-an-array
 
 # 方案 #
-采用[QuickSort](https://leon-wtf.github.io/leon.github.io/algorithm/2019/07/26/sort/#more)的思想来解决:
+采用[QuickSort](https://leon-wtf.github.io/algorithm/2019/07/26/sort/#more)的思想来解决:
 ```java
 import java.util.Random;
 class Solution {

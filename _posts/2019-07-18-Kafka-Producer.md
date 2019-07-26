@@ -242,7 +242,7 @@ def _maybe_compress(self):
     return False
 ```
 ### Socket ###
-The Kafka producer uses the I/O multiplexing model [Linux I/O model 和 JAVA NIO/AIO](https://leon-wtf.github.io/leon.github.io/java/2019/06/19/linux-io-model-java-nio-aio/)
+The Kafka producer uses the I/O multiplexing model [Linux I/O model 和 JAVA NIO/AIO](https://leon-wtf.github.io/java/2019/06/19/linux-io-model-java-nio-aio/)
 #### Create connection ####
 ```python
 # In sender thread, run->run_once->self._client.poll(poll_timeout_ms)->self._maybe_refresh_metadata()->self.maybe_connect(node_id, wakeup=wakeup)->self._connecting.add(node_id)->Queues a node for asynchronous connection during the next poll()
