@@ -118,9 +118,9 @@ index_with_subtitle: false
 menu:
   home: /
   #categories: /categories/
-  about: /about/
-  archives: /archives/
-  tags: /tags/
+  about: about/
+  archives: archives/
+  tags: tags/
   #sitemap: /sitemap.xml
   #commonweal: /404.html
 
@@ -361,8 +361,8 @@ highlight_theme: normal
 
 # MathJax Support
 mathjax:
-  enable: true
-  per_page: true
+  enable: false
+  per_page: false
   cdn: //cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
 
 # Han Support docs: https://hanzi.pro/
