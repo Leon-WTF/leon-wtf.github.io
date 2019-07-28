@@ -6,7 +6,7 @@ tags: [design-pattern, java]
 [装饰模式 vs (静态)代理模式](https://leon-wtf.github.io/java/2019/06/20/decorative-static-proxy-pattern/)中提到,在静态代理模式中，针对每一个需要被代理的类都要在编译前就提前写好一个代理类，这样做增加了类管理的复杂性，如果我们可以在运行期间动态的来生成这个代理类，就会方便很多，这就是动态代理模式的核心思想，也是Spring中AOP(Aspect Oriented Programming)的实现原理。动态代理有两种实现方法：jdk动态代理和cglib动态代理，下面分别来具体看一下：
 
 ### jdk动态代理 ###
-我们知道，在java中如果想在运行期动态的生成一个类，就要借助反射机制。jdk动态代理就是通过***java.lang.reflect.Proxy***利用反射机制提供了一种原生的动态代理模式，它提供了一个静态方法：
+我们知道，在java中如果想在运行期动态的生成一个类，就要借助反射机制。jdk动态代理就是通过*java.lang.reflect.Proxy*利用反射机制提供了一种原生的动态代理模式，它提供了一个静态方法：
 ```java
     public static Object newProxyInstance(ClassLoader loader,
                                           Class<?>[] interfaces,
@@ -64,8 +64,9 @@ tags: [design-pattern, java]
 - interfaces: the list of interfaces for the proxy class to implement
 - h: the invocation handler to dispatch method invocations to
 
-其中**getProxyClass0**会调用Proxy的内部类**ProxyClassFactory**的**apply**方法，然后调用**ProxyGenerator**里的**generateProxyClass**生成Class字节码数组，再利用**defineClass0**将字节码数组转成Class对象返回。
+其中*getProxyClass0*会调用Proxy的内部类*ProxyClassFactory*的*apply*方法，然后调用*ProxyGenerator*里的*generateProxyClass*生成Class字节码数组，再利用*defineClass0*将字节码数组转成Class对象返回。
 ```java
+// In apply of apply
 byte[] proxyClassFile = ProxyGenerator.generateProxyClass(proxyName, interfaces, accessFlags);
 try {
 	return defineClass0(loader, proxyName,
@@ -80,6 +81,7 @@ try {
 	 */
 	throw new IllegalArgumentException(e.toString());
 }
+// In ProxyGenerator
 public static byte[] generateProxyClass(final String var0, Class<?>[] var1, int var2) {
 	ProxyGenerator var3 = new ProxyGenerator(var0, var1, var2);
 	final byte[] var4 = var3.generateClassFile();
@@ -108,7 +110,7 @@ public static byte[] generateProxyClass(final String var0, Class<?>[] var1, int 
 	return var4;
 }
 ```
-然后利用这个Class对象传入InvocationHandler参数构建一个代理类实例。在运行当前main方法的路径下创建com/sun/proxy目录，并创建一个$**Proxy0**.class文件，然后设置**sun.misc.ProxyGenerator.saveGeneratedFiles**系统属性为true，反编$**Proxy0.class**文件可以看到：
+然后利用这个Class对象传入InvocationHandler参数构建一个代理类实例。在运行当前main方法的路径下创建com/sun/proxy目录，并创建一个$*Proxy0*.class文件，然后设置*sun.misc.ProxyGenerator.saveGeneratedFiles*系统属性为true，反编$*Proxy0.class*文件可以看到：
 ```java
 public final class $Proxy0 extends Proxy implements UserManager {
   private static Method m1;
@@ -292,7 +294,7 @@ public class UserManagerImpl$$EnhancerByCGLIB$$e4856e83
  */
 package net.sf.cglib.proxy;
  
-/**
+/*
  * General-purpose {@link Enhancer} callback which provides for "around advice".
  * @author Juozas Baliuka <a href="mailto:baliuka@mwm.lt">baliuka@mwm.lt</a>
  * @version $Id: MethodInterceptor.java,v 1.8 2004/06/24 21:15:20 herbyderby Exp $
@@ -300,7 +302,7 @@ package net.sf.cglib.proxy;
 public interface MethodInterceptor
 extends Callback
 {
-    /**
+    /*
      * All generated proxied methods call this method instead of the original method.
      * The original method may either be invoked by normal reflection using the Method object,
      * or by using the MethodProxy (faster).
