@@ -64,39 +64,52 @@ tags: [design-pattern, java]
 - interfaces: the list of interfaces for the proxy class to implement
 - h: the invocation handler to dispatch method invocations to
 
-其中Class<?> cl = **getProxyClass0**(loader, intfs);最终会调用Proxy的内部类**ProxyClassFactory**，然后调用**ProxyGenerator**里的**generateProxyClass**生成Class字节码数组：
+其中**getProxyClass0**会调用Proxy的内部类**ProxyClassFactory**的**apply**方法，然后调用**ProxyGenerator**里的**generateProxyClass**生成Class字节码数组，再利用**defineClass0**将字节码数组转成Class对象返回。
 ```java
-    public static byte[] generateProxyClass(final String var0, Class<?>[] var1, int var2) {
-        ProxyGenerator var3 = new ProxyGenerator(var0, var1, var2);
-        final byte[] var4 = var3.generateClassFile();
-        if (saveGeneratedFiles) {
-            AccessController.doPrivileged(new PrivilegedAction<Void>() {
-                public Void run() {
-                    try {
-                        int var1 = var0.lastIndexOf(46);
-                        Path var2;
-                        if (var1 > 0) {
-                            Path var3 = Paths.get(var0.substring(0, var1).replace('.', File.separatorChar));
-                            Files.createDirectories(var3);
-                            var2 = var3.resolve(var0.substring(var1 + 1, var0.length()) + ".class");
-                        } else {
-                            var2 = Paths.get(var0 + ".class");
-                        }
+byte[] proxyClassFile = ProxyGenerator.generateProxyClass(proxyName, interfaces, accessFlags);
+try {
+	return defineClass0(loader, proxyName,
+						proxyClassFile, 0, proxyClassFile.length);
+} catch (ClassFormatError e) {
+	/*
+	 * A ClassFormatError here means that (barring bugs in the
+	 * proxy class generation code) there was some other
+	 * invalid aspect of the arguments supplied to the proxy
+	 * class creation (such as virtual machine limitations
+	 * exceeded).
+	 */
+	throw new IllegalArgumentException(e.toString());
+}
+public static byte[] generateProxyClass(final String var0, Class<?>[] var1, int var2) {
+	ProxyGenerator var3 = new ProxyGenerator(var0, var1, var2);
+	final byte[] var4 = var3.generateClassFile();
+	if (saveGeneratedFiles) {
+		AccessController.doPrivileged(new PrivilegedAction<Void>() {
+			public Void run() {
+				try {
+					int var1 = var0.lastIndexOf(46);
+					Path var2;
+					if (var1 > 0) {
+						Path var3 = Paths.get(var0.substring(0, var1).replace('.', File.separatorChar));
+						Files.createDirectories(var3);
+						var2 = var3.resolve(var0.substring(var1 + 1, var0.length()) + ".class");
+					} else {
+						var2 = Paths.get(var0 + ".class");
+					}
 
-                        Files.write(var2, var4, new OpenOption[0]);
-                        return null;
-                    } catch (IOException var4x) {
-                        throw new InternalError("I/O exception saving generated file: " + var4x);
-                    }
-                }
-            });
-        }
-        return var4;
-    }
+					Files.write(var2, var4, new OpenOption[0]);
+					return null;
+				} catch (IOException var4x) {
+					throw new InternalError("I/O exception saving generated file: " + var4x);
+				}
+			}
+		});
+	}
+	return var4;
+}
 ```
-最后利用**defineClass0**(loader, proxyName,proxyClassFile, 0, proxyClassFile.length);返回类实例。然后利用这个类传入InvocationHandler参数构建一个代理类实例。在运行当前main方法的路径下创建com/sun/proxy目录，并创建一个$**Proxy0**.class文件，然后设置**sun.misc.ProxyGenerator.saveGeneratedFiles**系统属性为true，反编$**Proxy0.class**文件可以看到：
+然后利用这个Class对象传入InvocationHandler参数构建一个代理类实例。在运行当前main方法的路径下创建com/sun/proxy目录，并创建一个$**Proxy0**.class文件，然后设置**sun.misc.ProxyGenerator.saveGeneratedFiles**系统属性为true，反编$**Proxy0.class**文件可以看到：
 ```java
-
 public final class $Proxy0 extends Proxy implements UserManager {
   private static Method m1;
   private static Method m3;

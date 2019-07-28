@@ -5,7 +5,7 @@
 
 # Site
 title: Leon's Blog
-subtitle: "A programmer who likes to search for essence"
+subtitle: "A programmer who likes to pursue the essence"
 description:
 # Support language: de, en, fr-FR, id, ja, ko, pt-BR, pt, ru, zh-Hans, zh-hk, zh-tw
 language: en
@@ -237,7 +237,7 @@ social:
   Email: mailto:tengfei.wang.2018@gmail.com
 # Sidebar Avatar
 # in directory: /assets/images/avatar.gif
-#avatar:
+avatar: /assets/images/avatar.gif
 
 
 # Table Of Contents in the Sidebar
@@ -428,11 +428,11 @@ changyan:
 
 # Support for LiveRe comments system.
 # You can get your uid from https://livere.com/insight/myCode (General web site)
-#livere_uid: your uid
+livere_uid: MTAyMC80NTYzMy8yMjE0NA==
 
 # Support for gitalk comments system.
 gitalk:
-  enable: true
+  enable: false
   clientID: ded2659da858717b8c5a
   clientSecret: 6c3942b22731cb6f007f3a847a561ad77aaf370c
   repo: leon-wtf.github.io
