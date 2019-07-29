@@ -19,7 +19,9 @@ type: about
 
 疯狂的工作也拼命的玩
 
-# 联系 #
+### 联系 ###
+欢迎互换博客友情链接
+
 Email: tengfei.wang.2018@gmail.com
 
 WeChat: name_leon

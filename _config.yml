@@ -6,7 +6,8 @@
 # Site
 title: Leon's Blog
 subtitle: "A programmer who likes to pursue the essence"
-description:
+author: leon
+description: "做有用的人，酿有趣的魂"
 # Support language: de, en, fr-FR, id, ja, ko, pt-BR, pt, ru, zh-Hans, zh-hk, zh-tw
 language: en
 date_format: '%Y-%m-%d'
@@ -18,7 +19,7 @@ baseurl:
 permalink: pretty
 
 # Pagination
-paginate: 10
+paginate: 15
 #paginate_path: "/page:num/"
 #archive:
   #paginate: 10
