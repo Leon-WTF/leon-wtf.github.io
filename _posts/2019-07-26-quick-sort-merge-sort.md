@@ -1,5 +1,5 @@
 ---
-title: "Sort Algorithm"
+title: "Quick Sort & Merge Sort"
 category: Algorithm
 tag: algorithm
 ---
