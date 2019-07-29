@@ -20,8 +20,9 @@ It can be made stable if instead of swapping the minimum element to its position
 > https://www.geeksforgeeks.org/selection-sort/
 
 # Comparation #
+
 |Algorithm name|Stable|In-place|Average Case Time complexity|Space complexity|
-|--|--|--|--|--|--|
+|:------------:|:----:|:------:|:--------------------------:|:--------------:|
 |Bubble Sort|Yes|Yes|$O(n^2)$|O(1)|
 |Insertion Sort|Yes|Yes|$O(n^2)$|O(1)|
 |Selection Sort|No|Yes|$O(n^2)$|O(1)|
@@ -29,8 +30,10 @@ It can be made stable if instead of swapping the minimum element to its position
 |Merge Sort|Yes|No|O(nlogn)|O(n)|
 |Bucket Sort|Yes|No|O(n)|O(n)|
 |Counting Sort|Yes|No|O(n)|O(n+k)|
-|Radix Sort|Yes|No|O(n)|O(n+k)/O(n)|
-* k: the max value of the input data/the length of the counting array
+|Radix Sort|Yes|No|O(n)|O(n+k)|
+
+k: the max value of the input data/the length of the counting array
 
 > [Linear Sort Algorithm](https://leon-wtf.github.io/algorithm/2019/07/28/linear-sort/#more)
+
 > [Quick Sort & Merge Sort](https://leon-wtf.github.io/algorithm/2019/07/26/quick-sort-merge-sort/#more)
