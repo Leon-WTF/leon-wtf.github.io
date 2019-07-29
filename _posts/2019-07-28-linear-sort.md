@@ -28,7 +28,10 @@ It is just a special case of bucket sort, which the number of bucket equal to th
 It can be used when k is not big, and the data range can be converted to non-negative integer.
 
 > https://www.geeksforgeeks.org/counting-sort/
+
 # Radix Sort #
 The idea of Radix Sort is to do digit by digit sort starting from least significant digit to most significant digit. Radix sort uses counting sort/bucket sort as a subroutine to sort which needs to be stable.
 > https://www.geeksforgeeks.org/radix-sort/
 
+> [Simple Sort Algorithm](https://leon-wtf.github.io/algorithm/2019/07/28/simple-sort/#more)
+> [Quick Sort & Merge Sort](https://leon-wtf.github.io/algorithm/2019/07/26/quick-sort-merge-sort/#more)

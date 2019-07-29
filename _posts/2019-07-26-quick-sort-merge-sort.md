@@ -230,3 +230,5 @@ public class linkedList {
 
 > https://www.geeksforgeeks.org/merge-sort/
 > https://www.geeksforgeeks.org/merge-sort-for-linked-list/
+> [Simple Sort Algorithm](https://leon-wtf.github.io/algorithm/2019/07/28/simple-sort/#more)
+> [Linear Sort Algorithm](https://leon-wtf.github.io/algorithm/2019/07/28/linear-sort/#more)
