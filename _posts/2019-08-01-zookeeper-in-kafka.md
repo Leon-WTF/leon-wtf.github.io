@@ -30,6 +30,7 @@ Sets the data of znode /path to data
 Returns the data in /path
 - getChildren /path
 Returns the list of children under /path
+
 ## Different Modes for Znode ##
 - Persistent znode
 A persistent znode can be deleted only through a call to delete. It's useful when the znode stores some data on behalf of an application and this data needs to be preserved even after its creator is no longer part of the system.
@@ -74,6 +75,7 @@ Create sequential ephemeral znode and subscribe the watcher on last znode smalle
 - (0.9.0) - Quotas - how much data is each client allowed to read and write
 In order to have different producing and consuming quotas, Kafka Broker allows some clients. This value is set in ZK under /config/clients path. Also, we can change it in bin/kafka-configs.sh script.
 - (0.9.0) - ACLs - who is allowed to read and write to which topic.
+
 # Asynchronous operations #
 In ZooKeeper, all synchronous calls have corresponding asynchronous calls. 
 ```java
