@@ -70,15 +70,14 @@ T(n) = 2*T(n/2)+n = 2*(T(n/4)+n/2)+n = 2*(2*(T(n/8)+n/4)+n/2)+n = 2^k*T(n/2^k)+k
 $$
 When $k = \log_2 n, T(n/2^k) = T(1), T(n) = C*n + n * \log_2 n \approx O(n \log n)$ 
 - In general case, we can suppose the partition puts O(n/9) elements in one set and O(9n/10) elements in other set: $T(n) = T(n/9) + T(n/10) + n \approx O(n \log n)$ 
-
-> https://www.geeksforgeeks.org/quick-sort/
+> [quick-sort](https://www.geeksforgeeks.org/quick-sort/)
 
 ## Dual-pivot Quick Sort ##
 The idea of dual pivot quick sort is to take two pivots, one in the left end of the array and the second, in the right end of the array. The left pivot must be less than or equal to the right pivot, so we swap them if necessary.
 Then, we begin partitioning the array into three parts: in the first part, all elements will be less than the left pivot, in the second part all elements will be greater or equal to the left pivot and also will be less than or equal to the right pivot, and in the third part all elements will be greater than the right pivot. Then, we shift the two pivots to their appropriate positions as we see in the below bar, and after that we begin quick sorting these three parts recursively, using this method.
 ![dual-pivot-quick-sort](https://img-blog.csdnimg.cn/20190726104415926.png)
 Dual pivot quick sort is a little bit faster than the original single pivot quicksort. But still, the worst case will remain $O(n^2)$ when the array is already sorted in an increasing or decreasing order.
-> https://www.geeksforgeeks.org/dual-pivot-quicksort/
+> [dual-pivot-quicksort](https://www.geeksforgeeks.org/dual-pivot-quicksort/)
 
 # Merge Sort #
 In **Arrays.sort(Object[] a)** of Java, it use the Merge Sort algorithm. Like QuickSort, Merge Sort is a Divide and Conquer algorithm. It divides input array in two halves, calls itself for the two halves and then merges the two sorted halves. The merge(arr, l, m, r) is key process that assumes that arr[l..m] and arr[m+1..r] are sorted and merges the two sorted sub-arrays into one. 
@@ -228,9 +227,9 @@ public class linkedList {
 } 
 ```
 
-> https://www.geeksforgeeks.org/merge-sort/
+> [merge-sort](https://www.geeksforgeeks.org/merge-sort/)
 
-> https://www.geeksforgeeks.org/merge-sort-for-linked-list/
+> [merge-sort-for-linked-list](https://www.geeksforgeeks.org/merge-sort-for-linked-list/)
 
 > [Simple Sort Algorithm](https://leon-wtf.github.io/algorithm/2019/07/28/simple-sort/#more)
 
