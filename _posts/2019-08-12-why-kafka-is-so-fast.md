@@ -6,6 +6,7 @@ tag: kafka
 - Batching of multiple published messages to yield less frequent network round trips to the broker
 - Support for multiple in-flight messages
 - End-to-end compression
+
 - Partitioning of topics across multiple brokers in a cluster
 - Immediately write data to a persistent log on the filesystem without necessarily flushing to disk(transferred into the kernel's pagecache) rather than accumulate them in JVM heap
 - Maximized use of sequential disk reads and writes
