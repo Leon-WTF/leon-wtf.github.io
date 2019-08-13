@@ -4,7 +4,7 @@ category: Kafka
 tag: kafka
 ---
 I will show you the kafka producer workflow using kafka-python:
-### Initialize ###
+# Initialize #
 
 ```python
 # Create the producer object by passing the config dictionary
@@ -61,7 +61,7 @@ def _clear_wake_fd(self):
         except socket.error:
             break 
 ```
-### Get cluster meta data ###
+# Get cluster meta data #
 ```python
 # When Sender thread is started, its run method is called, then run_once->self._client.poll(poll_timeout_ms)->self._maybe_refresh_metadata()
 # If _need_update is not set, Cluster meta data is refreshed every metadata_max_age_ms
@@ -109,13 +109,13 @@ def _wait_on_metadata(self, topic, max_wait):
         else:
             log.debug("_wait_on_metadata woke after %s secs.", elapsed)
 ```
-### Serialize ###
+# Serialize #
 ```python
 # In send function of KafkaProducer
 key_bytes = self._serialize(self.config['key_serializer'], topic, key)
 value_bytes = self._serialize(self.config['value_serializer'], topic, value)
 ```
-### Partition ###
+# Partition #
 ```python
 # In send function of KafkaProducer, use partition (int, optional) optionally specify a partition. If not set, the partition will be selected using the configured 'partitioner'.
 def _partition(self, topic, partition, key, value,
@@ -156,7 +156,7 @@ class DefaultPartitioner(object):
         idx %= len(all_partitions)
         return all_partitions[idx]
 ```
-### Accumulate records ###
+# Accumulate records #
 ```python
 # In send function of KafkaProducer
 # First check the message size(include cls.HEADER_STRUCT.size and cls.MAX_RECORD_OVERHEAD) is smaller than max_request_size and buffer_memory
@@ -188,7 +188,7 @@ main_buffer = self._buffer
 if (required_size + len_func(main_buffer) > self._batch_size and not first_message):
     return None
 ```
-### Group by broker(node) and send ###
+# Group by broker(node) and send #
 ```python
 # In the run_once of Sender
 # Get a list of nodes whose partitions are ready to be sent, A destination node is ready to send if:
@@ -208,7 +208,7 @@ requests = self._create_produce_requests(batches_by_node)
 # Try to read and write to sockets. This method will also attempt to complete node connections, refresh stale metadata, and run previously-scheduled tasks.
 self._client.poll(poll_timeout_ms)
 ```
-### [Compression](https://cwiki.apache.org/confluence/display/KAFKA/Compression) ###
+# [Compression](https://cwiki.apache.org/confluence/display/KAFKA/Compression) #
 ```python
 # In the drain function of RecordAccumulator, batch.records.close(MemoryRecordsBuilder)->self._builder.build()(DefaultRecordBatchBuilder)->self._maybe_compress()(DefaultRecordBatchBuilder)
 batch = dq.popleft()
@@ -241,9 +241,9 @@ def _maybe_compress(self):
             return True
     return False
 ```
-### Socket ###
+# Socket #
 The Kafka producer uses the I/O multiplexing model [Linux I/O model 和 JAVA NIO/AIO](https://leon-wtf.github.io/java/2019/06/19/linux-io-model-java-nio-aio/)
-#### Create connection ####
+## Create connection ##
 ```python
 # In sender thread, run->run_once->self._client.poll(poll_timeout_ms)->self._maybe_refresh_metadata()->self.maybe_connect(node_id, wakeup=wakeup)->self._connecting.add(node_id)->Queues a node for asynchronous connection during the next poll()
 # In poll(self, timeout_ms=None, future=None) of KafkaClient, Attempt to complete pending connections
@@ -291,7 +291,7 @@ if self.state is ConnectionStates.CONNECTING:
 # In _poll(self, timeout) of KafkaClient, self._selector is EpollSelector in my case:
 ready = self._selector.select(timeout)
 ```
-#### Send Request ####
+## Send Request ##
 ```python
 # In the run_once of Sender, self._client.send->conn.send->conn._send will queue the request internally, and the _handle_produce_response callback is added in the future returned. We will need to call send_pending_requests() to trigger network I/O
 future = Future()
@@ -377,7 +377,7 @@ def _fire_pending_completed_requests(self):
         responses.append(response)
     return responses
 ```
-### Delivery timeout ###
+# Delivery timeout #
 ```python
 # There is not delivery timeout config for kafka-python client, I think timeout in get function of FutureRecordMetadata has same function:
 def get(self, timeout=None):
@@ -394,9 +394,9 @@ def wait(self, timeout=None):
     # wait() on python2.6 returns None instead of the flag value
     return self._latch.wait(timeout) or self._latch.is_set()
 ```
-### SSL(Secure Sockets Layer) ###
+# SSL(Secure Sockets Layer) #
 In a SSL handshake, the broker will send their cetificate to client, the client will check the validity by checking if it is signed by the trusted CA. Then they will communicate one symmetric key using the SSL asymmetric public-private key which is used for the remained of the secure connection.
-#### Create a private certificate authority(CA) ####
+## Create a private certificate authority(CA) ##
 ```bash
 openssl req -new -x509 -keyout ca-key -out ca-cert -days 365
 # Add the CA cetificate to the trust store of client
@@ -404,13 +404,13 @@ keytool -keystore kafka.client.truststore.jks -alias CARoot -import -file ca-cer
 # If you configure the Kafka brokers to require client authentication by setting ssl.client.auth to requested or required, you must also provide a trust store for the Kafka brokers and add the CA cetificate into it
 keytool -keystore kafka.server.truststore.jks -alias CARoot -import -file ca-cert
 ```
-#### Create certificate for brokers ####
+## Create certificate for brokers ##
 ```bash
 # The keystore file stores the certificate and the private key of the certificate
 # Ensure that common name (CN) matches exactly with the fully qualified domain name (FQDN) of the server. The client compares the CN with the DNS domain name to ensure that it is indeed connecting to the desired server, not a malicious one.
 keytool -keystore kafka.server.keystore.jks -alias localhost -validity {validity} -genkey
 ```
-#### Sign the cetificate ####
+## Sign the cetificate ##
 ```bash
 # Export broker certificate from keystore
 keytool -keystore kafka.server.keystore.jks -alias localhost -certreq -file cert-file

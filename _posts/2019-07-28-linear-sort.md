@@ -16,7 +16,7 @@ With the assumption that the data can be uniformly distributed into the buckets,
 
 So the total time complexity is O(n)
 When the data is too big to fit into the memory, we can use bucket sort to split the data into small file firstly.
-> https://www.geeksforgeeks.org/bucket-sort-2/
+> [bucket-sort](https://www.geeksforgeeks.org/bucket-sort-2/)
 
 # Counting Sort #
 It is just a special case of bucket sort, which the number of bucket equal to the range of input data, so we don't need to sort in each bucket.
@@ -26,12 +26,11 @@ It is just a special case of bucket sort, which the number of bucket equal to th
 4. Output each object i from the input sequence based on the value of A[i] followed by decreasing A[i] by 1 -> O(n)
 
 It can be used when k is not big, and the data range can be converted to non-negative integer.
-
-> https://www.geeksforgeeks.org/counting-sort/
+> [counting-sort](https://www.geeksforgeeks.org/counting-sort/)
 
 # Radix Sort #
 The idea of Radix Sort is to do digit by digit sort starting from least significant digit to most significant digit. Radix sort uses counting sort/bucket sort as a subroutine to sort which needs to be stable.
-> https://www.geeksforgeeks.org/radix-sort/
+> [radix-sort](https://www.geeksforgeeks.org/radix-sort/)
 
 > [Simple Sort Algorithm](https://leon-wtf.github.io/algorithm/2019/07/28/simple-sort/#more)
 
