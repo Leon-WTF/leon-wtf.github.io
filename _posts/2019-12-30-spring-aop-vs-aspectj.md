@@ -31,7 +31,56 @@ AspectJ使用复杂，但功能强大，可以实现任意位置的织入，且�
 ```
 @EnableTransactionManagement(mode=AdviceMode.ASPECTJ)
 ```
-2. 在工程依赖和plugin依赖中都引入spring-aspects
+2. 在工程依赖和plugin依赖中都引入spring-aspects:
 [Spring @Transactional With AspectJ](http://sevenlist.github.io/2014/08/24/spring-at-transactional-with-aspectj/)
 这是因为被AspectJ织入的aspect（实现事务的代码）是二进制形式的，在spring-aspects中，而不是源代码形式的：
 [Applying already compiled aspect JARs](http://www.mojohaus.org/aspectj-maven-plugin/examples/libraryJars.html)
+
+```
+          <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <version>1.11</version>
+                <configuration>
+                    <showWeaveInfo>true</showWeaveInfo>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <complianceLevel>1.8</complianceLevel>
+                    <Xlint>ignore</Xlint>
+                    <forceAjcCompile>true</forceAjcCompile>
+                    <sources/>
+                    <weaveDirectories>
+                        <weaveDirectory>${project.build.directory}/classes</weaveDirectory>
+                    </weaveDirectories>
+                    <aspectLibraries>
+                        <aspectLibrary>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring-aspects</artifactId>
+                        </aspectLibrary>
+                    </aspectLibraries>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+```
+
+## 验证
+
+1. 在编译出来的class文件中看到被插入的代码（intellij idea中需要Decompile and Attach插件）:
+```
+    @Transactional(
+        rollbackFor = {Exception.class}
+    )
+    private void insertLogistics(List<LogisticsInfo> logisticsInfoList) {
+        AnnotationTransactionAspect var10000 = AnnotationTransactionAspect.aspectOf();
+        Object[] var3 = new Object[]{this, logisticsInfoList};
+        var10000.ajc$around$org_springframework_transaction_aspectj_AbstractTransactionAspect$1$2a73e96c(this, new LogisticsService$AjcClosure1(var3), ajc$tjp_0);
+    }
+```
+2. 通过MySQL的general log查看实际执行的mysql语句，看前后是否有set autocommit = 0 和 set autocommit = 1 [mysql的全量(查询)日志general-log的开启和分析方法](https://blog.51cto.com/arthur376/1853924)
