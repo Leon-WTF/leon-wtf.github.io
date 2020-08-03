@@ -77,10 +77,10 @@ AspectJ使用复杂，但功能强大，可以实现任意位置的织入，且�
     @Transactional(
         rollbackFor = {Exception.class}
     )
-    private void insertLogistics(List<LogisticsInfo> logisticsInfoList) {
+    private void insertLogistics(List<Object> list) {
         AnnotationTransactionAspect var10000 = AnnotationTransactionAspect.aspectOf();
-        Object[] var3 = new Object[]{this, logisticsInfoList};
-        var10000.ajc$around$org_springframework_transaction_aspectj_AbstractTransactionAspect$1$2a73e96c(this, new LogisticsService$AjcClosure1(var3), ajc$tjp_0);
+        Object[] var3 = new Object[]{this, list};
+        var10000.ajc$around$org_springframework_transaction_aspectj_AbstractTransactionAspect$1$2a73e96c(this, new FooService$AjcClosure1(var3), ajc$tjp_0);
     }
 ```
 2. 通过MySQL的general log查看实际执行的mysql语句，看前后是否有set autocommit = 0 和 set autocommit = 1 [mysql的全量(查询)日志general-log的开启和分析方法](https://blog.51cto.com/arthur376/1853924)
