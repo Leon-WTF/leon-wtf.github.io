@@ -3,7 +3,7 @@ title: "SpringBoot and Web容器"
 category: SpringBoot
 tag: [SpringBoot, mvc, web, servlet]
 ---
-### 前言
+## 前言
 现在很多程序员接触java web开发都是从SpringBoot开始，其独立jar运行和免配置的易用性很好的屏蔽了很多繁琐的工作，但也容易让人忽略底层的实现原理，比如：web容器。本文以一个请求为例，简单描述一下其到达服务器后所经历的调用流程。
 
 首先，一个http请求通过域名解析到的ip连接web服务器，然后，根据端口号找到对应的提供服务的应用，这个应用就是web容器，如：Tomcat容器。我们写的SpringBoot应用在启动时就会先启动一个web容器，默认是Tomcat容器。
