@@ -77,7 +77,7 @@ AspectJ使用复杂，但功能强大，可以实现任意位置的织入，且�
     @Transactional(
         rollbackFor = {Exception.class}
     )
-    private void insertLogistics(List<Object> list) {
+    private void insert(List<Object> list) {
         AnnotationTransactionAspect var10000 = AnnotationTransactionAspect.aspectOf();
         Object[] var3 = new Object[]{this, list};
         var10000.ajc$around$org_springframework_transaction_aspectj_AbstractTransactionAspect$1$2a73e96c(this, new FooService$AjcClosure1(var3), ajc$tjp_0);
