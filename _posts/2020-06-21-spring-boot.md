@@ -29,13 +29,22 @@ SpringBoot可以根据classpath中引入的类来进行自动配置，比如：�
 
 其实现逻辑都在spring-boot-autoconfigure.jar中，所有用到的自动配置类都列在 /META-INF/spring.factories中。当应用使用了@EnableAutoConfiguration注解后，应用会读取spring.factories里列出的auto configure类来进行配置,比如：DispatcherServletAutoConfiguration.
 
-https://www.jianshu.com/p/a4f652eb1fbe
-https://www.jianshu.com/p/1a2d2f868143
-https://blog.csdn.net/xh16319/article/details/8014193
-https://dzone.com/articles/spring-boot-vs-spring-mvc-vs-spring-how-do-they-compare
-https://techrocking.com/what-is-spring-boot-auto-configuration/
-https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/mvc.html
-https://blog.csdn.net/l6108003/article/details/106770028
-https://zhuanlan.zhihu.com/p/62979297
-https://zhuanlan.zhihu.com/p/63212113
-https://www.bbsmax.com/A/D854YZjVdE/
+[Java Web从如何启动到Servlet&Tomcat](https://www.jianshu.com/p/a4f652eb1fbe)
+
+[深入理解Tomcat（八）Container](https://www.jianshu.com/p/1a2d2f868143)
+
+[Context Path](https://blog.csdn.net/xh16319/article/details/8014193)
+
+[Spring Boot vs. Spring MVC vs. Spring: How Do They Compare?](https://dzone.com/articles/spring-boot-vs-spring-mvc-vs-spring-how-do-they-compare)
+
+[What is spring boot auto configuration](https://techrocking.com/what-is-spring-boot-auto-configuration)
+
+[Web MVC framework](https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/mvc.html)
+
+[这一次搞懂SpringMVC原理](https://blog.csdn.net/l6108003/article/details/106770028)
+
+[Spring系列（一）：Spring MVC bean 解析、注册、实例化流程源码剖析](https://zhuanlan.zhihu.com/p/62979297)
+
+[Spring 系列（二）：Spring MVC的父子容器](https://zhuanlan.zhihu.com/p/63212113)
+
+[这一次搞懂Spring Web零xml配置原理以及父子容器关系](https://www.bbsmax.com/A/D854YZjVdE)
