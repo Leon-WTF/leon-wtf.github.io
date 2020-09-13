@@ -1,0 +1,41 @@
+---
+title: "Reactive and NIO"
+category: Basic
+tag: [reactive, nio]
+---
+## 响应式编程
+Java社区从1.8开始推出了Reactive Streams API，并掀起了一阵Reactive Programming范式热潮。详情可以参见[Reactive Manifesto](https://www.reactivemanifesto.org/).
+Reactive Streams API主要包括以下四种接口：
+### Publiser
+```
+public interface Publisher<T> {
+    public void subscribe(Subscriber<? super T> s);
+}
+```
+### Subscriber
+```
+public interface Subscriber<T> {
+    public void onSubscribe(Subscription s);
+    public void onNext(T t);
+    public void onError(Throwable t);
+    public void onComplete();
+}
+```
+### Subscription
+```
+public interface Subscription {
+    public void request(long n);
+    public void cancel();
+}
+```
+### Processor
+```
+public interface Processor<T, R> extends Subscriber<T>, Publisher<R> {
+}
+```
+Reactive Streams API的实现库有很多，例如：RxJava，Reactor，Akka Streams等，Spring 5中基于响应式编程的web框架--WebFlux就是采用的Reactor实现。
+## webFlux-WebClient
+下面就以Spring 5中WebClient为例看一下响应式编程是如何实现的。
+
+[What Are Reactive Streams in Java?](https://dzone.com/articles/what-are-reactive-streams-in-java)
+[Mastering Reactive Streams](https://dzone.com/articles/mastering-own-reactive-streams-implementation-part)
