@@ -83,10 +83,10 @@ public void subscribe(CoreSubscriber<? super T> actual) {
 在MonoDefer.subscribe中调用了supplier.get()，通过前面传入的Supplier函数开始调用链：
 DefaultExchangeFunction.exchange->ReactorClientHttpConnector.connect->HttpClientTcpConfig.request(HttpClientTcpConfig通过修饰者模式最终封装了HttpClientConnect，
 内部组合了实现TcpClient接口的HttpTcpClient，最后返回HttpClientFinalizer)->HttpClientFinalizer.uri->HttpClientFinalizer.send(一路通过创建者和修饰着模式，
-构建TcpClientBootstrap，最终修饰HttpTcpClient)->HttpClientFinalizer.responseConnection->TcpClientOperator.connect->HttpTcpClient.connect(内部包含TcpClientConnect，
-返回实现了Mono接口的MonoHttpConnect)->MonoHttpConnect.flatMapMany(返回MonoFlatMapMany)->MonoFlatMapMany.next(返回MonoNext)->MonoNext.doOnRequest(返回MonoPeek修饰MonoNext)
-->MonoPeek.doOnCancel(返回MonoPeek修饰MonoPeek)->MonoPeek.map(返回MonoMap修饰MonoPeek)->MonoMap.checkpoint(返回MonoOnAssembly修饰MonoMap)->onoOnAssembly.switchIfEmpty
-(返回MonoSwitchIfEmpty修饰MonoOnAssembly)
+构建TcpClientBootstrap，最终修饰HttpTcpClient)->HttpClientFinalizer.responseConnection->TcpClientBootstrap.connect->TcpClientOperator.connect(Bootstrap b)->...->
+HttpTcpClient.connect(内部包含TcpClientConnect，返回实现了Mono接口的MonoHttpConnect)->MonoHttpConnect.flatMapMany(返回MonoFlatMapMany)->MonoFlatMapMany.next(返回MonoNext)
+->MonoNext.doOnRequest(返回MonoPeek修饰MonoNext)->MonoPeek.doOnCancel(返回MonoPeek修饰MonoPeek)->MonoPeek.map(返回MonoMap修饰MonoPeek)->MonoMap.checkpoint
+(返回MonoOnAssembly修饰MonoMap)->onoOnAssembly.switchIfEmpty(返回MonoSwitchIfEmpty修饰MonoOnAssembly)
 最后调用MonoSwitchIfEmpty的subscribe注册BlockingMonoSubscriber,会先进入其父类的subscribe函数，此函数会从外向内依次遍历修饰的Mono，并生成相应的Subscriber注册到内层。
 ```
 	public final void subscribe(CoreSubscriber<? super O> subscriber) {
