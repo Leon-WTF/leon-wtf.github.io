@@ -87,7 +87,36 @@ DefaultExchangeFunction.exchange->ReactorClientHttpConnector.connect->HttpClient
 返回实现了Mono接口的MonoHttpConnect)->MonoHttpConnect.flatMapMany(返回MonoFlatMapMany)->MonoFlatMapMany.next(返回MonoNext)->MonoNext.doOnRequest(返回MonoPeek修饰MonoNext)
 ->MonoPeek.doOnCancel(返回MonoPeek修饰MonoPeek)->MonoPeek.map(返回MonoMap修饰MonoPeek)->MonoMap.checkpoint(返回MonoOnAssembly修饰MonoMap)->onoOnAssembly.switchIfEmpty
 (返回MonoSwitchIfEmpty修饰MonoOnAssembly)
-最后调用MonoSwitchIfEmpty的subscribe注册BlockingMonoSubscriber
+最后调用MonoSwitchIfEmpty的subscribe注册BlockingMonoSubscriber,会先进入其父类的subscribe函数，此函数会从外向内依次遍历修饰的Mono，并生成相应的Subscriber注册到内层。
+```
+	public final void subscribe(CoreSubscriber<? super O> subscriber) {
+		OptimizableOperator operator = this;
+		while (true) {
+			subscriber = operator.subscribeOrReturn(subscriber);
+			if (subscriber == null) {
+				// null means "I will subscribe myself", returning...
+				return;
+			}
+			OptimizableOperator newSource = operator.nextOptimizableSource();
+			if (newSource == null) {
+				operator.source().subscribe(subscriber);
+				return;
+			}
+			operator = newSource;
+		}
+	}
+```
+第一次会先调用MonoSwitchIfEmpty.subscribeOrReturn,生成实现了Subscription接口的FluxSwitchIfEmpty.SwitchIfEmptySubscriber，
+传入BlockingMonoSubscriber的onSubscribe函数。
+```
+	public CoreSubscriber<? super T> subscribeOrReturn(CoreSubscriber<? super T> actual) {
+		FluxSwitchIfEmpty.SwitchIfEmptySubscriber<T> parent = new
+				FluxSwitchIfEmpty.SwitchIfEmptySubscriber<>(actual, other);
 
+		actual.onSubscribe(parent);
+
+		return parent;
+	}
+```
 [What Are Reactive Streams in Java?](https://dzone.com/articles/what-are-reactive-streams-in-java)
 [Mastering Reactive Streams](https://dzone.com/articles/mastering-own-reactive-streams-implementation-part)
