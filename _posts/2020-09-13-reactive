@@ -36,6 +36,58 @@ public interface Processor<T, R> extends Subscriber<T>, Publisher<R> {
 Reactive Streams API的实现库有很多，例如：RxJava，Reactor，Akka Streams等，Spring 5中基于响应式编程的web框架--WebFlux就是采用的Reactor实现。
 ## webFlux-WebClient
 下面就以Spring 5中WebClient为例看一下响应式编程是如何实现的。
+```
+        Mono<ClientResponse> mono = webClient
+                .get()
+                .uri("/posts/1"
+                .exchange();
+        System.out.println("Block Result:"+mono.block());
+```
+```
+		public Mono<ClientResponse> exchange() {
+			ClientRequest request = (this.inserter != null ?
+					initRequestBuilder().body(this.inserter).build() :
+					initRequestBuilder().build());
+			return Mono.defer(() -> exchangeFunction.exchange(request)
+					.checkpoint("Request to " + this.httpMethod.name() + " " + this.uri + " [DefaultWebClient]")
+					.switchIfEmpty(NO_HTTP_CLIENT_RESPONSE_ERROR));
+		}
+```
+```
+	public T block() {
+		BlockingMonoSubscriber<T> subscriber = new BlockingMonoSubscriber<>();
+		subscribe((Subscriber<T>) subscriber);
+		return subscriber.blockingGet();
+	}
+```
+WebClient的默认实现DefaultWebClient通过exchange生成一个MonoDefer实例，实现了Mono接口（Spring中对Publisher接口的封装）。
+传入参数为Supplier函数，用于产出数据，此处是进行http请求并获取响应，但此时还并未开始真正的请求。
+通过调用Mono的block函数，生成了一个BlockingMonoSubscriber实例，实现了Subscriber接口，并利用MonoDefer重写的subscribe函数注册到了Publisher中。
+BlockingMonoSubscriber同时还继承自CountDownLatch，计数为1，调用blockingGet函数后线程进入wait状态，等待计数清零后被唤醒。
+```
+public void subscribe(CoreSubscriber<? super T> actual) {
+		Mono<? extends T> p;
+
+		try {
+			p = Objects.requireNonNull(supplier.get(),
+					"The Mono returned by the supplier is null");
+		}
+		catch (Throwable e) {
+			Operators.error(actual, Operators.onOperatorError(e, actual.currentContext()));
+			return;
+		}
+
+		p.subscribe(actual);
+	}
+```
+在MonoDefer.subscribe中调用了supplier.get()，通过前面传入的Supplier函数开始调用链：
+DefaultExchangeFunction.exchange->ReactorClientHttpConnector.connect->HttpClientTcpConfig.request(HttpClientTcpConfig通过修饰者模式最终封装了HttpClientConnect，
+内部组合了实现TcpClient接口的HttpTcpClient，最后返回HttpClientFinalizer)->HttpClientFinalizer.uri->HttpClientFinalizer.send(一路通过创建者和修饰着模式，
+构建TcpClientBootstrap，最终修饰HttpTcpClient)->HttpClientFinalizer.responseConnection->TcpClientOperator.connect->HttpTcpClient.connect(内部包含TcpClientConnect，
+返回实现了Mono接口的MonoHttpConnect)->MonoHttpConnect.flatMapMany(返回MonoFlatMapMany)->MonoFlatMapMany.next(返回MonoNext)->MonoNext.doOnRequest(返回MonoPeek修饰MonoNext)
+->MonoPeek.doOnCancel(返回MonoPeek修饰MonoPeek)->MonoPeek.map(返回MonoMap修饰MonoPeek)->MonoMap.checkpoint(返回MonoOnAssembly修饰MonoMap)->onoOnAssembly.switchIfEmpty
+(返回MonoSwitchIfEmpty修饰MonoOnAssembly)
+最后调用MonoSwitchIfEmpty的subscribe注册BlockingMonoSubscriber
 
 [What Are Reactive Streams in Java?](https://dzone.com/articles/what-are-reactive-streams-in-java)
 [Mastering Reactive Streams](https://dzone.com/articles/mastering-own-reactive-streams-implementation-part)
