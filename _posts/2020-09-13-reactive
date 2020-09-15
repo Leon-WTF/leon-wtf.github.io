@@ -118,7 +118,7 @@ DefaultExchangeFunction.exchange->ReactorClientHttpConnector.connect->HttpClient
 		return parent;
 	}
 ```
-最后调用MonoHttpConnect的connect，最终调用Bootstrap.doResolveAndConnect,开始netty创建连接的过程:
+最后调用MonoHttpConnect的subscribe函数，触发Bootstrap.doResolveAndConnect,开始netty创建连接的过程:
 ```
     private ChannelFuture doResolveAndConnect(final SocketAddress remoteAddress, final SocketAddress localAddress) {
         final ChannelFuture regFuture = initAndRegister();
