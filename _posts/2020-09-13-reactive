@@ -83,8 +83,8 @@ public void subscribe(CoreSubscriber<? super T> actual) {
 在MonoDefer.subscribe中调用了supplier.get()，通过前面传入的Supplier函数开始调用链：
 DefaultExchangeFunction.exchange->ReactorClientHttpConnector.connect->HttpClientTcpConfig.request(HttpClientTcpConfig通过修饰者模式最终封装了HttpClientConnect，
 内部组合了实现TcpClient接口的HttpTcpClient，最后返回HttpClientFinalizer)->HttpClientFinalizer.uri->HttpClientFinalizer.send(一路通过创建者和修饰着模式，
-构建TcpClientBootstrap，最终修饰HttpTcpClient)->HttpClientFinalizer.responseConnection->TcpClientBootstrap.connect->TcpClientOperator.connect(Bootstrap b)->...->
-HttpTcpClient.connect(内部包含TcpClientConnect，返回实现了Mono接口的MonoHttpConnect)->MonoHttpConnect.flatMapMany(返回MonoFlatMapMany)->MonoFlatMapMany.next(返回MonoNext)
+构建TcpClientBootstrap，最终修饰HttpTcpClient)->HttpClientFinalizer.responseConnection->TcpClientBootstrap.connect->TcpClientOperator.connect(Bootstrap b)->...
+（内部嵌套调用被修饰类的connect方法）->HttpTcpClient.connect(内部包含TcpClientConnect，返回实现了Mono接口的MonoHttpConnect)->MonoHttpConnect.flatMapMany(返回MonoFlatMapMany)->MonoFlatMapMany.next(返回MonoNext)
 ->MonoNext.doOnRequest(返回MonoPeek修饰MonoNext)->MonoPeek.doOnCancel(返回MonoPeek修饰MonoPeek)->MonoPeek.map(返回MonoMap修饰MonoPeek)->MonoMap.checkpoint
 (返回MonoOnAssembly修饰MonoMap)->onoOnAssembly.switchIfEmpty(返回MonoSwitchIfEmpty修饰MonoOnAssembly)
 最后调用MonoSwitchIfEmpty的subscribe注册BlockingMonoSubscriber,会先进入其父类的subscribe函数，此函数会从外向内依次遍历修饰的Mono，并生成相应的Subscriber注册到内层。
@@ -107,7 +107,7 @@ HttpTcpClient.connect(内部包含TcpClientConnect，返回实现了Mono接口�
 	}
 ```
 第一次会先调用MonoSwitchIfEmpty.subscribeOrReturn,生成实现了Subscription接口的FluxSwitchIfEmpty.SwitchIfEmptySubscriber，
-传入BlockingMonoSubscriber的onSubscribe函数。
+传入BlockingMonoSubscriber的onSubscribe函数。。
 ```
 	public CoreSubscriber<? super T> subscribeOrReturn(CoreSubscriber<? super T> actual) {
 		FluxSwitchIfEmpty.SwitchIfEmptySubscriber<T> parent = new
@@ -118,5 +118,165 @@ HttpTcpClient.connect(内部包含TcpClientConnect，返回实现了Mono接口�
 		return parent;
 	}
 ```
+最后调用MonoHttpConnect的connect，最终调用Bootstrap.doResolveAndConnect,开始netty创建连接的过程:
+```
+    private ChannelFuture doResolveAndConnect(final SocketAddress remoteAddress, final SocketAddress localAddress) {
+        final ChannelFuture regFuture = initAndRegister();
+        final Channel channel = regFuture.channel();
+
+        if (regFuture.isDone()) {
+            if (!regFuture.isSuccess()) {
+                return regFuture;
+            }
+            return doResolveAndConnect0(channel, remoteAddress, localAddress, channel.newPromise());
+        } else {
+            // Registration future is almost always fulfilled already, but just in case it's not.
+            final PendingRegistrationPromise promise = new PendingRegistrationPromise(channel);
+            regFuture.addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    // Directly obtain the cause and do a null check so we only need one volatile read in case of a
+                    // failure.
+                    Throwable cause = future.cause();
+                    if (cause != null) {
+                        // Registration on the EventLoop failed so fail the ChannelPromise directly to not cause an
+                        // IllegalStateException once we try to access the EventLoop of the Channel.
+                        promise.setFailure(cause);
+                    } else {
+                        // Registration was successful, so set the correct executor to use.
+                        // See https://github.com/netty/netty/issues/2586
+                        promise.registered();
+                        doResolveAndConnect0(channel, remoteAddress, localAddress, promise);
+                    }
+                }
+            });
+            return promise;
+        }
+    }
+```
+1.1 AbstractBootstrap.initAndRegister(final Channel channel = channelFactory().newChannel();)创建NioSocketChannel
+```
+    final ChannelFuture initAndRegister() {
+        Channel channel = null;
+        try {
+            channel = channelFactory.newChannel();
+            init(channel);
+        } catch (Throwable t) {
+            if (channel != null) {
+                // channel can be null if newChannel crashed (eg SocketException("too many open files"))
+                channel.unsafe().closeForcibly();
+                // as the Channel is not registered yet we need to force the usage of the GlobalEventExecutor
+                return new DefaultChannelPromise(channel, GlobalEventExecutor.INSTANCE).setFailure(t);
+            }
+            // as the Channel is not registered yet we need to force the usage of the GlobalEventExecutor
+            return new DefaultChannelPromise(new FailedChannel(), GlobalEventExecutor.INSTANCE).setFailure(t);
+        }
+
+        ChannelFuture regFuture = config().group().register(channel);
+        if (regFuture.cause() != null) {
+            if (channel.isRegistered()) {
+                channel.close();
+            } else {
+                channel.unsafe().closeForcibly();
+            }
+        }
+
+        // If we are here and the promise is not failed, it's one of the following cases:
+        // 1) If we attempted registration from the event loop, the registration has been completed at this point.
+        //    i.e. It's safe to attempt bind() or connect() now because the channel has been registered.
+        // 2) If we attempted registration from the other thread, the registration request has been successfully
+        //    added to the event loop's task queue for later execution.
+        //    i.e. It's safe to attempt bind() or connect() now:
+        //         because bind() or connect() will be executed *after* the scheduled registration task is executed
+        //         because register(), bind(), and connect() are all bound to the same thread.
+
+        return regFuture;
+    }
+```
+1.2 config().group().register(channel)->SingleThreadEventLoop.register->AbstractUnsafe.register0->AbstractNioChannel.doRegister->
+selectionKey = javaChannel().register(eventLoop().unwrappedSelector(), 0, this);将NioSocketChannel注册到对应SingleThreadEventLoop的selector上。
+1.3 Bootstrap.doConnet->NioSocketChannel.doConnect,
+```
+    protected boolean doConnect(SocketAddress remoteAddress, SocketAddress localAddress) throws Exception {
+        if (localAddress != null) {
+            doBind0(localAddress);
+        }
+
+        boolean success = false;
+        try {
+            boolean connected = SocketUtils.connect(javaChannel(), remoteAddress);
+            if (!connected) {
+                selectionKey().interestOps(SelectionKey.OP_CONNECT);
+            }
+            success = true;
+            return connected;
+        } finally {
+            if (!success) {
+                doClose();
+            }
+        }
+    }
+```
+此处就向服务端发起了connect请求，准备三次握手。由于是非阻塞模式，所以该方法会立即返回。如果建立连接成功，则返回true，否则返回false,后续需要使用select来检测连接是否已建立成功。
+如果返回false，此种情况就需要将ops设置为SelectionKey.OP_CONNECT，等待connect的select事件通知。
+1.4 NioEventLoop中sellector接收到connect时间后调用AbstractNioUnsafe.finishConnect->AbstractNioUnsafe.fulfillConnectPromise->pipeline().fireChannelActive(),
+触发ChannelActive事件，该事件是一个inbound事件，所以Inbound的处理器可以通过实现channelActive方法来进行相应的操作，netty的自带例子中，EchoClientHandler实现该方法来开始向服务端写数据。
+```
+    private void processSelectedKey(SelectionKey k, AbstractNioChannel ch) {
+        final AbstractNioChannel.NioUnsafe unsafe = ch.unsafe();
+        if (!k.isValid()) {
+            final EventLoop eventLoop;
+            try {
+                eventLoop = ch.eventLoop();
+            } catch (Throwable ignored) {
+                // If the channel implementation throws an exception because there is no event loop, we ignore this
+                // because we are only trying to determine if ch is registered to this event loop and thus has authority
+                // to close ch.
+                return;
+            }
+            // Only close ch if ch is still registered to this EventLoop. ch could have deregistered from the event loop
+            // and thus the SelectionKey could be cancelled as part of the deregistration process, but the channel is
+            // still healthy and should not be closed.
+            // See https://github.com/netty/netty/issues/5125
+            if (eventLoop == this) {
+                // close the channel if the key is not valid anymore
+                unsafe.close(unsafe.voidPromise());
+            }
+            return;
+        }
+
+        try {
+            int readyOps = k.readyOps();
+            // We first need to call finishConnect() before try to trigger a read(...) or write(...) as otherwise
+            // the NIO JDK channel implementation may throw a NotYetConnectedException.
+            if ((readyOps & SelectionKey.OP_CONNECT) != 0) {
+                // remove OP_CONNECT as otherwise Selector.select(..) will always return without blocking
+                // See https://github.com/netty/netty/issues/924
+                int ops = k.interestOps();
+                ops &= ~SelectionKey.OP_CONNECT;
+                k.interestOps(ops);
+
+                unsafe.finishConnect();
+            }
+
+            // Process OP_WRITE first as we may be able to write some queued buffers and so free memory.
+            if ((readyOps & SelectionKey.OP_WRITE) != 0) {
+                // Call forceFlush which will also take care of clear the OP_WRITE once there is nothing left to write
+                ch.unsafe().forceFlush();
+            }
+
+            // Also check for readOps of 0 to workaround possible JDK bug which may otherwise lead
+            // to a spin loop
+            if ((readyOps & (SelectionKey.OP_READ | SelectionKey.OP_ACCEPT)) != 0 || readyOps == 0) {
+                unsafe.read();
+            }
+        } catch (CancelledKeyException ignored) {
+            unsafe.close(unsafe.voidPromise());
+        }
+    }
+```
+NioEventLoop的selector同时还会监听writeable事件来表示可以继续向网卡发送数据和readable事件，来读取服务器返回的响应。
+
 [What Are Reactive Streams in Java?](https://dzone.com/articles/what-are-reactive-streams-in-java)
 [Mastering Reactive Streams](https://dzone.com/articles/mastering-own-reactive-streams-implementation-part)
+[netty4源码分析-connect](https://www.iteye.com/blog/xw-z1985-1937999)
