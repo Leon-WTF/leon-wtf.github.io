@@ -276,6 +276,9 @@ selectionKey = javaChannel().register(eventLoop().unwrappedSelector(), 0, this);
     }
 ```
 NioEventLoop的selector同时还会监听writeable事件来表示可以继续向网卡发送数据和readable事件，来读取服务器返回的响应。
+## 应用场景
+1. 可以节省线程资源，即使被调用方响应缓慢，也不会占用请求线程。请求线程在发送请求后立即返回，等到有响应时再启动一个新的线程来返回结果。
+2. 可以并行发送多个http请求，减少总的请求-响应时间。
 
 [What Are Reactive Streams in Java?](https://dzone.com/articles/what-are-reactive-streams-in-java)
 [Mastering Reactive Streams](https://dzone.com/articles/mastering-own-reactive-streams-implementation-part)
