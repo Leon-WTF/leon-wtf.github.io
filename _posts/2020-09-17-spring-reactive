@@ -1,0 +1,9 @@
+DispatcherServlet.doService->DispatcherServlet.doDispatch->ReactiveTypeHandler.handleValue->
+new DeferredResultSubscriber(result, adapter, elementType).connect(adapter, returnValue);->DeferredResultSubscriber.connect
+```
+		public void connect(ReactiveAdapter adapter, Object returnValue) {
+			Publisher<Object> publisher = adapter.toPublisher(returnValue);
+			publisher.subscribe(this);
+		}
+```
+创建DeferredResultSubscriber注册到了returnValue中
