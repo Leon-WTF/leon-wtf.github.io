@@ -14,15 +14,15 @@ docker run -tid --name db -p 3306:3306 MySQL
 在宿主机上，可以通过iptables -t nat -L -n，查到一条DNAT规则：
 DNAT tcp -- 0.0.0.0/0 0.0.0.0/0 tcp dpt:3306 to:172.17.0.5:3306
 ```
-![docker_bridge](https://github.com/Leon-WTF/leon-wtf.github.io/blob/master/img/docker_bridge.jpg)
+![docker_bridge](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/docker_bridge.jpg)
 
 ### Host模式
 该模式下容器网络并未与宿主机网络进行隔离，而是占用了宿主机的端口，容易造成端口冲突。
-![docker_host](https://github.com/Leon-WTF/leon-wtf.github.io/blob/master/img/docker_host.jpg)
+![docker_host](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/docker_host.jpg)
 
 ### Containner模式
 该模式指后创建的容器与已有容器共用同一个Network Namespace，即共用一个IP和端口范围。则两个容器可以通过localhost网卡通信。
-![docker_container](https://github.com/Leon-WTF/leon-wtf.github.io/blob/master/img/docker_container.jpg)
+![docker_container](https://raw.githubusercontent.com/Leon-WTF/leon-wtf.github.io/master/img/docker_container.jpg)
 
 ## Kubernetes网络模型
 ### Pod内容器间的通信
