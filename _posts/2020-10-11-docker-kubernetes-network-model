@@ -38,10 +38,16 @@ flannel为Kubernetes集群提供了一个三层路由转发网络，通过存储
 将数据包的目的地址从Service的IP重写为Service后端特定的Pod IP，之后就与不同Node上Pod间的通信过程类似。
 
 ### 外部网络访问Service
-#### NodePort模式+LoadBalancer(四层网络)
+#### NodePort模式+LoadBalancer(四层流量入口)
 通过配置Service类型为NodePort，则外网则可以通过集群中任意节点的NodeIp:NodePort访问服务，接收到报文的节点会重定向到对应的Service。
 NodePort是靠kube-proxy服务通过iptables的nat转换功能实现的，kube-proxy会在运行过程中动态创建与Service相关的iptables规则，这些规则实现了NodePort的请求流量重定向到kube-proxy进程上对应的Service的代理端口上。
 kube-proxy接受到Service的请求访问后，会从service对应的后端Pod中选择一个进行访问。
+在这之前如果可以添加一个负载均衡器，比如目前阿里云上的SLB，则请求会通过访问负载均衡器的IP在被负载到K8s集群中的Node上。
+
+### Ingress模式（七层流量入口）
+不像负载均衡器每个服务需要一个公开ip,ingress所有服务只需要一个公网ip,当客户端向Ingress发送http请求时候，ingress会根据请求的主机名和路径决定请求转发到那个服务。
+它底层其实是通过Nginx来实现的，它会去对应服务的Endpoints列表里查找pod IP自己选择一个直接访问。
+基于http请求的负责模式可以通过host和url进行请求细分服务流量，还可以在请求的X-Forwarded-For标头中提供原始客户端的IP地址。
 
 [Docker容器是如何进行网络通信的](https://zhuanlan.zhihu.com/p/104503057)
 [K8s网络模型](http://www.spring4all.com/article/6886)
