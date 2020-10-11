@@ -12,13 +12,17 @@ Docker程序启动后会创建一个bridge0网桥，并分配一个IP，可以�
 ```
 docker run -tid --name db -p 3306:3306 MySQL
 在宿主机上，可以通过iptables -t nat -L -n，查到一条DNAT规则：
- DNAT tcp -- 0.0.0.0/0 0.0.0.0/0 tcp dpt:3306 to:172.17.0.5:3306
+DNAT tcp -- 0.0.0.0/0 0.0.0.0/0 tcp dpt:3306 to:172.17.0.5:3306
 ```
+![docker_bridge](https://github.com/Leon-WTF/leon-wtf.github.io/blob/master/img/docker_bridge.jpg)
+
 ### Host模式
 该模式下容器网络并未与宿主机网络进行隔离，而是占用了宿主机的端口，容易造成端口冲突。
+![docker_host](https://github.com/Leon-WTF/leon-wtf.github.io/blob/master/img/docker_host.jpg)
 
 ### Containner模式
 该模式指后创建的容器与已有容器共用同一个Network Namespace，即共用一个IP和端口范围。则两个容器可以通过localhost网卡通信。
+![docker_container](https://github.com/Leon-WTF/leon-wtf.github.io/blob/master/img/docker_container.jpg)
 
 ## Kubernetes网络模型
 ### Pod内容器间的通信
@@ -50,4 +54,5 @@ kube-proxy接受到Service的请求访问后，会从service对应的后端Pod�
 基于http请求的负责模式可以通过host和url进行请求细分服务流量，还可以在请求的X-Forwarded-For标头中提供原始客户端的IP地址。
 
 [Docker容器是如何进行网络通信的](https://zhuanlan.zhihu.com/p/104503057)
+
 [K8s网络模型](http://www.spring4all.com/article/6886)
