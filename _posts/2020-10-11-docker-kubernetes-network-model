@@ -33,8 +33,15 @@ Kubernetes中规定Pod IP在整个集群中唯一，且互相可以不通过IP�
 flannel为Kubernetes集群提供了一个三层路由转发网络，通过存储在etcd的pod ip与node ip对应关系，转发数据包到相应的节点上。
 
 ### Service与Pod间的通信
-由于Pod IP会经常变化，所以K8s在提供同样服务的Pod之上又抽象出了Service的概念
+由于Pod IP会经常变化，所以K8s在提供同样服务的Pod之上又抽象出了Service的概念。Service具有固定的CluserIp：port，可以通过内建的负载均衡器路由到背后的pod容器。
+在Pod内程序往Service上发送数据包时，数据包会经过iptables进行过滤，iptables接受数据包后会使用kube-proxy在Node上安装的规则来响应Service或Pod的事件，
+将数据包的目的地址从Service的IP重写为Service后端特定的Pod IP，之后就与不同Node上Pod间的通信过程类似。
 
+### 外部网络访问Service
+#### NodePort模式+LoadBalancer(四层网络)
+通过配置Service类型为NodePort，则外网则可以通过集群中任意节点的NodeIp:NodePort访问服务，接收到报文的节点会重定向到对应的Service。
+NodePort是靠kube-proxy服务通过iptables的nat转换功能实现的，kube-proxy会在运行过程中动态创建与Service相关的iptables规则，这些规则实现了NodePort的请求流量重定向到kube-proxy进程上对应的Service的代理端口上。
+kube-proxy接受到Service的请求访问后，会从service对应的后端Pod中选择一个进行访问。
 
 [Docker容器是如何进行网络通信的](https://zhuanlan.zhihu.com/p/104503057)
 [K8s网络模型](http://www.spring4all.com/article/6886)
