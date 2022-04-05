@@ -20,3 +20,6 @@ doc/perf/linux-perf-master.pdf filter=lfs diff=lfs merge=lfs -text
 doc/linux/《深入理解Linux内核(中文第三版)》.pdf filter=lfs diff=lfs merge=lfs -text
 doc/linux/深入理解Linux内核-第3版-中文版.pdf filter=lfs diff=lfs merge=lfs -text
 doc/network/图解TCP+IP第5版.pdf filter=lfs diff=lfs merge=lfs -text
+doc/Codelife.pdf filter=lfs diff=lfs merge=lfs -text
+doc/Java_manual.pdf filter=lfs diff=lfs merge=lfs -text
+doc/Learning[[:space:]]From[[:space:]]Data.pdf filter=lfs diff=lfs merge=lfs -text
